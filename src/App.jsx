@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 // function App(): 컴포넌트. App이라는 이름의 화면 조각을 만들겠다.
 function App() {
   const [todos, setTodos] = useState([]);
+  const [newTitle, setNewTitle] = useState('');
 
   useEffect(() => {
     // 8080 포트의 우리 자바 서버로 데이터 요청!
@@ -16,11 +17,58 @@ function App() {
       })
       .catch(err => console.error("데이터 로딩 실패:", err));
   }, []);
+  const handleAddTodo = () => {
+    if (!newTitle.trim()) {
+      return;
+    }
+    // 서버로 보낼 fetch(POST) 코드 자리
+    // console.log("서버로 보낼 내용: ", newTitle);
 
+    const todoData = {
+      title: newTitle, 
+      dueDate: new Date().toISOString().split('T')[0],
+      finished: false
+    };
+
+    fetch('http://localhost:8081/api/todos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(todoData)
+    })
+    .then(response => {
+      if(response.ok) {
+        alert("등록 성공!");
+        setNewTitle('');
+        window.location.reload();
+      }
+    })
+    .catch(err => console.error("등록 실패: ", err));
+    
+  }
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>실시간 할 일 관리 (Oracle DB)</h1>
+
+      <div style={{ marginBottom: '20px' }}>
+        <input 
+          type="text" 
+          placeholder="새로운 할 일을 입력하세요"
+          value={newTitle} // 바구니와 연결
+          onChange={(e) => setNewTitle(e.target.value)} // 글자 칠 때마다 바구니 업데이트
+          style={{ padding: '8px', width: '250px' }}
+        />
+        <button 
+          onClick={handleAddTodo} // 버튼 클릭 시 함수 실행
+          style={{ padding: '8px 15px', marginLeft: '5px', cursor: 'pointer' }}
+        >
+          등록
+        </button>
+      </div>
+
       <hr />
+      
       {todos.length === 0 ? (
         <p>데이터를 불러오는 중이거나 데이터가 없습니다.</p>
       ) : (
