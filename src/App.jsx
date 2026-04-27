@@ -20,7 +20,7 @@ function App() {
       .catch(err => console.error("데이터 로딩 실패:", err));
   }, []);
 
-  
+// 등록  
   const handleAddTodo = () => {
     if (!newTitle.trim()) {
       return;
@@ -51,7 +51,7 @@ function App() {
     .catch(err => console.error("등록 실패: ", err));
     
   }
-
+// 삭제
   const hadnleDelete = (tno) => {
     if(!confirm("정말 삭제하시겠습니까?")) return;
 
@@ -66,6 +66,21 @@ function App() {
     })
     .catch(err => console.error("삭제 실패:", err));
   };
+
+// 수정
+  const handleToggleTodo = (todo) => {
+    fetch(`http://localhost:8081/api/todos?mode=update&tno=${todo.tno}&finished=${!todo.finished}`, {
+
+      method: 'POST'
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.reload();
+      }
+    })
+    .catch(err => console.error("수정 실패:", err))
+  };
+  
 
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
@@ -95,20 +110,29 @@ function App() {
         <ul style={{ lineHeight: '2' }}>
           {todos.map(todo => (
             <li key={todo.tno} style={{marginBottom: '10px' }}>
-              <strong>{todo.title}</strong> 
-              <span style={{ color: '#666', marginLeft: '10px' }}>
-                ({todo.dueDate[0]}-{todo.dueDate[1]}-{todo.dueDate[2]})
+              <span 
+                onClick={() => handleToggleTodo(todo)}
+                style={{
+                  cursor: 'pointer',
+                  textDecoration: todo.finished ? 'line-through' : 'none', //완료 시 가로줄
+                  color: todo.finished ? '#ccc' : '#000'
+                }}
+              >
+                <strong>{todo.title}</strong> 
+                <span style={{ color: '#666', marginLeft: '10px' }}>
+                  ({todo.dueDate[0]}-{todo.dueDate[1]}-{todo.dueDate[2]})
+                </span>
+                {todo.finished ? ' ✅' : ' ⏳'}
               </span>
-              {todo.finished ? ' ✅' : ' ⏳'}
 
-{/* onClick에 () => handelDelete에서 () => 이거 안 쓰면 화면 그려지자마자 함수가 실행돼서
-    모든 데이터가 지워져 버린다. 그러니 클릭했을 때만 행해라 라는 뜻으로 
-    화살표 함수라는 보자기에 싸서 전달하는 것. */}
-              <button 
-                onClick={() => hadnleDelete(todo.tno)} 
-                style={{marginLeft: '10px', color: 'red', cursor: 'pointer' }}>
-              삭제
-              </button>
+  {/* onClick에 () => handelDelete에서 () => 이거 안 쓰면 화면 그려지자마자 함수가 실행돼서
+      모든 데이터가 지워져 버린다. 그러니 클릭했을 때만 행해라 라는 뜻으로 
+      화살표 함수라는 보자기에 싸서 전달하는 것. */}
+                <button 
+                  onClick={() => handleDelete(todo.tno)} 
+                  style={{marginLeft: '10px', color: 'red', cursor: 'pointer' }}>
+                삭제
+                </button>
             </li>
           ))}
         </ul>
