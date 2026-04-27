@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 
+// 자바 스크립트 안에 HTML을 넣은 JSX 파일.
 // function App(): 컴포넌트. App이라는 이름의 화면 조각을 만들겠다.
 function App() {
+  // useState와 useEffect는 리액트 핵심 엔진
   const [todos, setTodos] = useState([]);
   const [newTitle, setNewTitle] = useState('');
 
   useEffect(() => {
-    // 8080 포트의 우리 자바 서버로 데이터 요청!
-    // > 8080 가서 데이터 가져와라(fetch)
+    // 8081 포트의 우리 자바 서버로 데이터 요청!
+    // > 8081 가서 데이터 가져와라(fetch)
     fetch('http://localhost:8081/api/todos')
     // .then: 가져오는 데 시간 좀 걸리니 다 가져오면 그 다음에 일을 해라는 약속. 비동기 처리
       .then(response => response.json())
@@ -17,6 +19,8 @@ function App() {
       })
       .catch(err => console.error("데이터 로딩 실패:", err));
   }, []);
+
+  
   const handleAddTodo = () => {
     if (!newTitle.trim()) {
       return;
@@ -47,6 +51,22 @@ function App() {
     .catch(err => console.error("등록 실패: ", err));
     
   }
+
+  const hadnleDelete = (tno) => {
+    if(!confirm("정말 삭제하시겠습니까?")) return;
+
+    fetch(`http://localhost:8081/api/todos?mode=delete&tno=${tno}`, {
+      method: 'POST'
+    })
+    .then(response => {
+      if (response.ok) {
+        alert("삭제되었습니다.");
+        window.location.reload();
+      }
+    })
+    .catch(err => console.error("삭제 실패:", err));
+  };
+
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>실시간 할 일 관리 (Oracle DB)</h1>
@@ -74,12 +94,21 @@ function App() {
       ) : (
         <ul style={{ lineHeight: '2' }}>
           {todos.map(todo => (
-            <li key={todo.tno}>
+            <li key={todo.tno} style={{marginBottom: '10px' }}>
               <strong>{todo.title}</strong> 
               <span style={{ color: '#666', marginLeft: '10px' }}>
                 ({todo.dueDate[0]}-{todo.dueDate[1]}-{todo.dueDate[2]})
               </span>
               {todo.finished ? ' ✅' : ' ⏳'}
+
+{/* onClick에 () => handelDelete에서 () => 이거 안 쓰면 화면 그려지자마자 함수가 실행돼서
+    모든 데이터가 지워져 버린다. 그러니 클릭했을 때만 행해라 라는 뜻으로 
+    화살표 함수라는 보자기에 싸서 전달하는 것. */}
+              <button 
+                onClick={() => hadnleDelete(todo.tno)} 
+                style={{marginLeft: '10px', color: 'red', cursor: 'pointer' }}>
+              삭제
+              </button>
             </li>
           ))}
         </ul>
