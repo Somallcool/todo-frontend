@@ -1,184 +1,147 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
+/* App.css */
+
+/* 전체 컨테이너 */
+.app-container {
+  max-width: 1000px;
+  min-width: 700px;
+  margin: 50px auto;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  font-family: 'Pretendard', -apple-system, sans-serif;
+}
+
+/* 제목 영역 */
+ h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+} 
+
+/* 할 일 입력 영역 */
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  outline: none;
   transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+.input-group input:focus {
+  border-color: #4A90E2;
 }
 
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
+/* 등록 버튼 */
+.add-btn {
+  padding: 10px 20px;
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+} 
 
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+.add-btn:hover {
+  background-color: #4caf50;
+  color: #e8f5e9;
 }
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
+/* 리스트 영역 */
+.todo-list {
   list-style: none;
   padding: 0;
+}
+
+/* 한 줄 전체 영역 */
+.todo-item {
   display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
 }
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
+.todo-item:hover {
+  background-color: #96e798;
+  color: #004911;
 }
 
-.ticks {
-  position: relative;
-  width: 100%;
+/* 글자 영역 */
+.todo-content {
+  flex: 1;
+  /* margin: 0 15px; */
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
+.todo-tno {
+  font-size: 0.85em;
+  color: #4A90E2;       /* 신뢰감을 주는 파란색 */
+  background-color: #eef6ff; /* 연한 하늘색 배경 */
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 10px;   /* 제목과의 간격 */
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace; /* 숫자니까 코드 느낌 나는 폰트 */
+}
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+/* 완료 시 번호 색상도 흐리게 */
+.completed .todo-tno {
+  background-color: #f0f0f0;
+  color: #ccc;
+}
+
+/* 할 일 title 영역 */
+.todo-title {
+  font-size: 1.3em;
+  font-weight: 500;
+}
+
+/* 날짜 영역이 있어야 todo-content에서 flex-direction: column;로 title과 날짜를 세로로 이쁘게 정렬 */
+.due-date {
+
+}
+
+/* 완료 상태 스타일 */
+.completed .todo-title {
+  text-decoration: line-through;
+  color: #ff0000;
+}
+
+/* 삭제 버튼 */
+.delete-btn {
+  background-color: #fff;
+  color: #ff5252;
+  border: 1px solid #ff5252;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.2s;
+} 
+
+.delete-btn:hover {
+  background-color: #ff5252;
+  color: #fff;
+}
+
+.todo-item.completed {
+  background-color: #e8f5e9; 
+  border-left: 5px solid #4caf50; 
+  transition: all 0.3s ease; 
+}
+
+.completed .due-date {
+  color: #aaa;
 }

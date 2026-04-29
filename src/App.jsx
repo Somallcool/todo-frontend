@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-
+import './App.css'
 // 자바 스크립트 안에 HTML을 넣은 JSX 파일.
 // function App(): 컴포넌트. App이라는 이름의 화면 조각을 만들겠다.
 function App() {
@@ -100,21 +100,17 @@ function App() {
 
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>실시간 할 일 관리 (Oracle DB)</h1>
+    <div className="app-container">
+      <h1>실시간 할 일 관리</h1>
 
-      <div style={{ marginBottom: '20px' }}>
+      <div className="input-group">
         <input
           type="text"
           placeholder="새로운 할 일을 입력하세요"
           value={newTitle} // 바구니와 연결
           onChange={(e) => setNewTitle(e.target.value)} // 글자 칠 때마다 바구니 업데이트
-          style={{ padding: '8px', width: '250px' }}
         />
-        <button
-          onClick={handleAddTodo} // 버튼 클릭 시 함수 실행
-          style={{ padding: '8px 15px', marginLeft: '5px', cursor: 'pointer' }}
-        >
+        <button onClick={handleAddTodo} className="add-btn">
           등록
         </button>
       </div>
@@ -126,46 +122,36 @@ function App() {
       {todos.length === 0 ? (
         <p>데이터를 불러오는 중이거나 데이터가 없습니다.</p>
       ) : (
-        <ul style={{ lineHeight: '2' }}>
+        <ul className="todo-list">
           {todos.map(todo => (
-            <li key={todo.tno} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+            <li key={todo.tno} className={`todo-item ${todo.finished ? 'completed' : ''}`}>
               {/* 1. 완료 상태 체크박스 */}
               <input
                 type="checkbox"
                 checked={todo.finished}
                 onChange={() => handleToggleTodo(todo)}
-                style={{ cursor: 'pointer', marginRight: '5px' }}
               />
 
               {/* 2. 상태 아이콘 (✅ 또는 ⏳) */}
-              <span style={{ marginRight: '10px', fontSize: '1.1em' }}>
-                {todo.finished ? '✅' : '⏳'}
-              </span>
+              <span>{todo.finished ? '✅' : '⏳'}</span>
 
               {/* 3. 제목 및 날짜 영역 (클릭 시 수정) */}
-              <span
+              <div
+                className="todo-content"
                 onClick={() => {
                   const newTitle = prompt("수정할 제목을 입력하세요", todo.title);
                   if (newTitle && newTitle !== todo.title) handleUpdate(todo, newTitle);
                 }}
-                style={{
-                  cursor: 'pointer',
-                  textDecoration: todo.finished ? 'line-through' : 'none',
-                  color: todo.finished ? '#ccc' : '#000',
-                  flexGrow: 1
-                }}
               >
-                <strong>{todo.title}</strong>
-                <span style={{ color: '#666', marginLeft: '10px', fontSize: '0.9em' }}>
-                  ({todo.dueDate[0]}-{todo.dueDate[1]}-{todo.dueDate[2]})
+                <span className="todo-tno">{todo.tno}</span>
+                <span className="todo-title">{todo.title}</span>
+                <span clssName="due-date">
+                  기한: ({todo.dueDate[0]}-{todo.dueDate[1]}-{todo.dueDate[2]})
                 </span>
-              </span>
+              </div>
 
               {/* 4. 삭제 버튼 */}
-              <button
-                onClick={() => handleDelete(todo.tno)}
-                style={{ marginLeft: '10px', color: 'red', cursor: 'pointer' }}
-              >
+              <button onClick={() => handleDelete(todo.tno)} className="delete-btn">
                 삭제
               </button>
             </li>
