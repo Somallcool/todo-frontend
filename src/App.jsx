@@ -12,23 +12,25 @@ function App() {
     priority: 2, 
     category: '일반'
   });
+  const [sortType, setSortType] = useState("tno");
 
   // Prompt 대신 모달창으로 바꾸기 26/4/30
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTodo, setEditingTodo] = useState(null);
 
   useEffect(() => {
-    // 8081 포트의 우리 자바 서버로 데이터 요청!
-    // > 8081 가서 데이터 가져와라(fetch)
-    fetch('http://localhost:8081/api/todos')
-      // .then: 가져오는 데 시간 좀 걸리니 다 가져오면 그 다음에 일을 해라는 약속. 비동기 처리
-      .then(response => response.json())
-      .then(data => {
-        console.log("받아온 데이터:", data);
-        setTodos(data);
-      })
-      .catch(err => console.error("데이터 로딩 실패:", err));
-  }, []);
+    fetchTodos();
+  }, [sortType]);
+
+  const fetchTodos = async () => {
+    try {
+      const response = await fetch(`http://localhost:8081/api/todos?sort=${sortType}`);
+      const data = await response.json();
+      setTodos(data);
+    } catch (err) {
+      console.error("데이터 로딩 실패:", err);
+    }
+  };
 
   // 등록  
   const handleInputChange = (e) => {
@@ -70,7 +72,7 @@ function App() {
       })
       .catch(err => console.error("등록 실패: ", err));
 
-  }
+  };
   // 삭제
   const handleDelete = (tno) => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
@@ -210,6 +212,17 @@ function App() {
         <p>데이터를 불러오는 중이거나 데이터가 없습니다.</p>
       ) : (
         <ul className="todo-list">
+          <div className="todo-list-controls">
+            <select 
+              value={sortType} 
+              onChange={(e) => setSortType(e.target.value)}
+              className="sort-select"
+            >
+              <option value="tno">최신등록순</option>
+              <option value="dueDate">마감임박순</option>
+              <option value="priority">우선순위순</option>
+            </select>
+          </div>
           {todos.map(todo => (
             <li key={todo.tno} className={`todo-item ${todo.finished ? 'completed' : ''}`}>
               <div className="todo-checkbox"> 
@@ -241,6 +254,8 @@ function App() {
           ))}
         </ul>
       )}
+
+      {/* 모달 UI */}
       {isModalOpen && editingTodo && (
         <div className="modal-overlay">
           <div className="modal-content">
