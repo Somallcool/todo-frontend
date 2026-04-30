@@ -1,47 +1,84 @@
-/* App.css */
-
-/* 전체 컨테이너 */
+/* 전체 앱의 배경과 중앙 정렬을 담당하는 컨테이너 */
 .app-container {
   max-width: 1000px;
   min-width: 700px;
   margin: 50px auto;
-  padding: 10px;
+  padding: 25px;
   background-color: #ffffff;
   border-radius: 15px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   font-family: 'Pretendard', -apple-system, sans-serif;
 }
 
-/* 제목 영역 */
- h1 {
+/* 앱 최상단 메인 타이틀 */
+h1 {
   text-align: center;
   color: #333;
   margin-bottom: 30px;
-} 
-
-/* 할 일 입력 영역 */
-.input-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 30px;
 }
 
-.input-group input {
-  flex: 1;
+/* 할 일 입력창들을 감싸는 연푸른색 배경의 박스 */
+.input-group-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f9fbfd;
+  border-radius: 12px;
+  border: 1px solid #eef2f6;
+}
+
+/* 입력 영역 첫 번째 줄 (제목, 날짜, 카테고리) */
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* 입력 영역 두 번째 줄 (상세내용, 우선순위, 등록버튼) */
+.input-row-second {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+/* 모든 입력 요소(input, select, textarea)의 공통 디자인 */
+.input-group-container input, 
+.input-group-container select, 
+.input-group-container textarea {
   padding: 12px;
   border: 2px solid #eee;
   border-radius: 8px;
   outline: none;
-  transition: border-color 0.3s;
+  transition: all 0.3s;
+  font-family: inherit;
 }
 
-.input-group input:focus {
+/* 제목 입력창이 가로 공간을 가장 많이 차지하도록 설정 */
+.input-group-container input[name="title"] {
+  flex: 3;
+}
+
+/* 상세 내용 입력창의 높이와 크기 조절 금지 설정 */
+.input-group-container textarea {
+  flex: 1;
+  height: 45px;
+  resize: none;
+}
+
+/* 입력창 클릭(포커스) 시 강조 효과 */
+.input-group-container input:focus, 
+.input-group-container select:focus, 
+.input-group-container textarea:focus {
   border-color: #4A90E2;
+  background-color: #fff;
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.1);
 }
 
-/* 등록 버튼 */
+/* 새로운 할 일을 서버로 전송하는 등록 버튼 */
 .add-btn {
-  padding: 10px 20px;
+  padding: 0 25px;
   background-color: #4A90E2;
   color: white;
   border: none;
@@ -49,20 +86,23 @@
   cursor: pointer;
   font-weight: bold;
   transition: all 0.3s;
-} 
-
-.add-btn:hover {
-  background-color: #4caf50;
-  color: #e8f5e9;
+  white-space: nowrap;
 }
 
-/* 리스트 영역 */
+/* 등록 버튼 마우스 오버 시 색상 변경 및 부유 효과 */
+.add-btn:hover {
+  background-color: #4caf50;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+/* 할 일 목록 전체를 감싸는 리스트 영역 */
 .todo-list {
   list-style: none;
   padding: 0;
 }
 
-/* 한 줄 전체 영역 */
+/* 목록 내 개별 할 일 아이템 줄 단위 영역 */
 .todo-item {
   display: flex;
   align-items: center;
@@ -71,55 +111,101 @@
   transition: background 0.2s;
 }
 
+/* 목록 줄 마우스 오버 시 배경 강조 */
 .todo-item:hover {
-  background-color: #96e798;
-  color: #004911;
+  background-color: #f8fff8;
 }
 
-/* 글자 영역 */
+/* 제목, 내용, 날짜 등 텍스트 정보가 담긴 중앙 영역 */
 .todo-content {
   flex: 1;
-  /* margin: 0 15px; */
-  cursor: pointer;
+  margin: 0 15px;
   display: flex;
   flex-direction: column;
+  gap: 5px;
 }
 
-.todo-tno {
-  font-size: 0.85em;
-  color: #4A90E2;       /* 신뢰감을 주는 파란색 */
-  background-color: #eef6ff; /* 연한 하늘색 배경 */
+/* 목록 내의 카테고리(업무, 운동 등) 배지 디자인 */
+.category-badge {
+  display: inline-block;
+  font-size: 0.75em;
+  background-color: #e2e8f0;
+  color: #4a5568;
   padding: 2px 8px;
   border-radius: 4px;
-  margin-right: 10px;   /* 제목과의 간격 */
   font-weight: bold;
-  font-family: 'Courier New', Courier, monospace; /* 숫자니까 코드 느낌 나는 폰트 */
+  width: fit-content;
 }
 
-/* 완료 시 번호 색상도 흐리게 */
-.completed .todo-tno {
-  background-color: #f0f0f0;
-  color: #ccc;
+/* 할 일 고유 번호(TNO) 표시 스타일 */
+.todo-tno {
+  font-size: 0.85em;
+  color: #4A90E2;
+  font-weight: bold;
+  margin-right: 8px;
 }
 
-/* 할 일 title 영역 */
+/* 할 일의 핵심 제목 텍스트 */
 .todo-title {
-  font-size: 1.3em;
-  font-weight: 500;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #333;
 }
 
-/* 날짜 영역이 있어야 todo-content에서 flex-direction: column;로 title과 날짜를 세로로 이쁘게 정렬 */
+/* 추가된 상세 내용(Content) 텍스트 스타일 */
+.todo-desc {
+  font-size: 0.9em;
+  color: #777;
+  margin: 2px 0;
+}
+
+/* 우선순위 배지 (p1, p2, p3 클래스에 따라 색상 변경 가능) */
+.priority-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+/* 우선순위 3 (높음) - 빨간색 계열 */
+.priority-badge.p3 {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+/* 우선순위 2 (보통) - 파란색 계열 */
+.priority-badge.p2 {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+/* 우선순위 1 (낮음) - 회색 계열 */
+.priority-badge.p1 {
+  background-color: #f5f5f5;
+  color: #757575;
+}
+
+/* 마감 기한 날짜 표시 영역 */
 .due-date {
-
+  font-size: 0.85em;
+  color: #888;
 }
 
-/* 완료 상태 스타일 */
+/* 완료된 할 일 아이템의 전체 배경 및 테두리 효과 */
+.todo-item.completed {
+  background-color: #fcfcfc;
+  border-left: 5px solid #4caf50;
+  opacity: 0.7;
+}
+
+/* 완료된 할 일 제목에 취소선 적용 */
 .completed .todo-title {
   text-decoration: line-through;
-  color: #ff0000;
+  color: #aaa;
 }
 
-/* 삭제 버튼 */
+/* 개별 할 일을 삭제하는 버튼 */
 .delete-btn {
   background-color: #fff;
   color: #ff5252;
@@ -129,19 +215,87 @@
   cursor: pointer;
   font-size: 0.9em;
   transition: all 0.2s;
-} 
+}
 
+/* 삭제 버튼 마우스 오버 시 반전 효과 */
 .delete-btn:hover {
   background-color: #ff5252;
   color: #fff;
 }
 
-.todo-item.completed {
-  background-color: #e8f5e9; 
-  border-left: 5px solid #4caf50; 
-  transition: all 0.3s ease; 
+/* 모달 배경 (어둡게 처리) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.completed .due-date {
-  color: #aaa;
+/* 모달 하얀색 박스 */
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 500px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.modal-body label {
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.modal-body input, .modal-body textarea, .modal-body select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.modal-row {
+  display: flex;
+  gap: 20px;
+}
+
+.modal-row > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.save-btn {
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #eee;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
 }
