@@ -74,6 +74,44 @@ function App() {
       });
   };
 
+  // 통합 삭제 함수: 완료된 항목만 필터링해서 삭제
+  const handleDeleteFinished = () => {
+    const finishedIds = todos
+      .filter(todo => todo.finished)
+      .map(todo => todo.tno);
+
+    if (finishedIds.length === 0) {
+      alert("완료된 항목이 없습니다.");
+      return;
+    }
+
+    if (!confirm(`완료된 ${finishedIds.length}개의 항목을 삭제하시겠습니까?`)) {return;}
+  
+    fetch(`http://localhost:8081/api/todos?mode=deleteSelected&nos=${finishedIds.join(',')}`, {
+      method: 'POST'
+    }).then(response => {
+      if (response.ok) {
+        alert("완료된 항목들이 삭제되었습니다.")
+        fetchTodos();
+      }
+    });
+  
+  };
+
+  const handleDeleteAll = () => {
+  if (!confirm("정말 모든 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) return;
+
+  // mode=deleteAll로 요청을 보냅니다.
+  fetch(`http://localhost:8081/api/todos?mode=deleteAll`, {
+    method: 'POST'
+  }).then(response => {
+    if (response.ok) {
+      alert("모든 데이터가 삭제되었습니다.");
+      fetchTodos(); // 목록 새로고침
+    }
+  });
+};
+
   // 완료 상태 토글
   const handleToggleTodo = (todo) => {
     fetch(`http://localhost:8081/api/todos?mode=updateFinished&tno=${todo.tno}&finished=${!todo.finished}`, {
@@ -159,6 +197,14 @@ function App() {
             <option value="dueDate">마감임박순</option>
             <option value="priority">우선순위순</option>
           </select>
+        </div>
+        
+        <div className="batch-actions">
+          {/* 이제 '전체 선택' 대신 '완료 항목 삭제' 버튼 하나로 충분합니다 */}
+          <button onClick={handleDeleteFinished} className="delete-finished-btn">
+            완료 항목 일괄 삭제
+          </button>
+          <button onClick={handleDeleteAll} className="delete-all-btn">전체 삭제</button>
         </div>
       </div>
 
