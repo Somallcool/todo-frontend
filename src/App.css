@@ -1,73 +1,77 @@
-/* 전체 앱의 배경과 중앙 정렬을 담당하는 컨테이너 */
+/* ==========================================================================
+   1. 기본 레이아웃 및 공통 설정
+   - 앱의 전체적인 틀, 배경, 폰트, 구분선 등을 정의합니다.
+   ========================================================================== */
 .app-container {
-  max-width: 1000px;
-  min-width: 700px;
+  max-width: 900px;
+  min-width: 750px;
   margin: 50px auto;
-  padding: 25px;
+  padding: 30px;
   background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08); /* 부드러운 입체감 */
   font-family: 'Pretendard', -apple-system, sans-serif;
 }
 
-/* 앱 최상단 메인 타이틀 */
 h1 {
   text-align: center;
   color: #333;
   margin-bottom: 30px;
+  font-weight: 800;
 }
 
-/* 할 일 입력창들을 감싸는 연푸른색 배경의 박스 */
+/* 섹션 간 연한 구분선 */
+.section-divider {
+  border: 0;
+  height: 1px;
+  background: #eee;
+  margin: 25px 0;
+}
+
+/* 할 일 목록 상단에 위치하는 포인트 컬러(파랑) 구분선 */
+.list-top-divider {
+  border: 0;
+  height: 2px;
+  background: #4A90E2;
+  margin: 0;
+}
+
+
+/* ==========================================================================
+   2. 할 일 등록 섹션 (Input Group)
+   - 새로운 할 일을 입력하는 영역입니다.
+   - align-items: stretch를 사용하여 텍스트 영역과 버튼 높이를 맞췄습니다.
+   ========================================================================== */
 .input-group-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 30px;
-  padding: 20px;
-  background-color: #f9fbfd;
-  border-radius: 12px;
+  gap: 15px; /* 행(Row) 사이의 간격 */
+  padding: 25px;
+  background-color: #f9fbfd; /* 등록 섹션 전용 연한 배경색 */
+  border-radius: 15px;
   border: 1px solid #eef2f6;
 }
 
-/* 입력 영역 첫 번째 줄 (제목, 날짜, 카테고리) */
+/* 입력 행 레이아웃: 내부 요소들이 높이를 서로 맞추도록 설정 */
 .input-row {
   display: flex;
-  gap: 10px;
-  align-items: center;
+  gap: 12px;
+  align-items: stretch; 
 }
 
-/* 입력 영역 두 번째 줄 (상세내용, 우선순위, 등록버튼) */
-.input-row-second {
-  display: flex;
-  gap: 10px;
-  align-items: stretch;
-}
-
-/* 모든 입력 요소(input, select, textarea)의 공통 디자인 */
+/* 공통 입력 필드 (input, select, textarea) 스타일 */
 .input-group-container input, 
 .input-group-container select, 
 .input-group-container textarea {
   padding: 12px;
   border: 2px solid #eee;
-  border-radius: 8px;
+  border-radius: 10px;
   outline: none;
   transition: all 0.3s;
   font-family: inherit;
 }
 
-/* 제목 입력창이 가로 공간을 가장 많이 차지하도록 설정 */
-.input-group-container input[name="title"] {
-  flex: 3;
-}
-
-/* 상세 내용 입력창의 높이와 크기 조절 금지 설정 */
-.input-group-container textarea {
-  flex: 1;
-  height: 45px;
-  resize: none;
-}
-
-/* 입력창 클릭(포커스) 시 강조 효과 */
+/* 입력 필드 포커스 시: 파란 테두리와 은은한 그림자 발생 */
 .input-group-container input:focus, 
 .input-group-container select:focus, 
 .input-group-container textarea:focus {
@@ -76,226 +80,346 @@ h1 {
   box-shadow: 0 0 8px rgba(74, 144, 226, 0.1);
 }
 
-/* 새로운 할 일을 서버로 전송하는 등록 버튼 */
+/* 첫 번째 행 너비 비율 설정 */
+.input-group-container input[name="title"] { flex: 3; }
+.input-group-container input[type="date"] { flex: 1.2; }
+.input-group-container select[name="category"] { flex: 1; }
+
+/* 두 번째 행 상세내용 영역 */
+.input-group-container textarea { 
+  flex: 3; 
+  height: 75px; 
+  resize: none; 
+}
+
+/* 우선순위 선택 및 완료 체크박스 그룹 (세로 배치) */
+.priority-group {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2px 0;
+  min-width: 140px;
+}
+
+.priority-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #666;
+  cursor: pointer;
+  margin-top: auto; /* 체크박스를 박스 하단으로 밀착 */
+}
+
+/* 등록 버튼: 우측 상세내용 입력창 높이에 맞춰 자동 확장 */
 .add-btn {
-  padding: 0 25px;
+  flex: 1;
   background-color: #4A90E2;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
+  font-size: 1.05rem;
   transition: all 0.3s;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 등록 버튼 마우스 오버 시 색상 변경 및 부유 효과 */
 .add-btn:hover {
-  background-color: #4caf50;
+  background-color: #4caf50; /* 호버 시 초록색으로 변경 */
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
-/* 할 일 목록 전체를 감싸는 리스트 영역 */
+
+/* ==========================================================================
+   3. 검색 및 필터 섹션
+   - 검색창 포커스 시 부모 컨테이너(.search-box)의 테두리가 변하는 것이 특징입니다.
+   ========================================================================== */
+.search-sort-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  margin: 20px 0;
+}
+
+/* 검색 박스 컨테이너 */
+.search-box {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 450px;
+  background: #f1f3f5;
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 2px solid transparent; 
+  transition: all 0.3s ease;
+}
+
+/* 검색 박스 내부 input이 포커스 되면 부모 박스 테두리 강조 */
+.search-box:focus-within {
+  border-color: #4A90E2;
+  background-color: #fff;
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.15);
+}
+
+.search-input {
+  border: none !important;
+  background: transparent;
+  width: 100%;
+  margin-left: 10px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+/* 정렬 셀렉트 박스 스타일 (등록 필드와 일관성 유지) */
+.sort-select {
+  padding: 8px 12px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.sort-select:focus {
+  border-color: #4A90E2;
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.1);
+}
+
+
+/* ==========================================================================
+   4. 일괄 작업 버튼군 (삭제 관련)
+   ========================================================================== */
+.batch-actions-container {
+  display: flex;
+  padding: 10px 5px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.delete-finished-btn, .delete-all-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* 완료삭제: 초록색 테두리 기반 */
+.delete-finished-btn {
+  background-color: #fff;
+  border: 1px solid #4caf50;
+  color: #4caf50;
+}
+
+.delete-finished-btn:hover {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* 전체삭제: 빨간색 테두리 기반 */
+.delete-all-btn {
+  background-color: #fff;
+  border: 1px solid #ff5252;
+  color: #ff5252;
+}
+
+.delete-all-btn:hover {
+  background-color: #ff5252;
+  color: white;
+}
+
+
+/* ==========================================================================
+   5. 할 일 목록 및 개별 아이템 (Todo List & Item)
+   - 항목 완료 시 배경색이 연초록으로 바뀌며, 배지(Badge) 형태의 정보를 포함합니다.
+   ========================================================================== */
 .todo-list {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
-/* 목록 내 개별 할 일 아이템 줄 단위 영역 */
 .todo-item {
   display: flex;
   align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background 0.2s;
+  padding: 18px 15px;
+  border-bottom: 1px solid #f3f3f3;
+  gap: 15px;
+  background-color: #ffffff;
+  transition: background-color 0.4s ease, opacity 0.4s ease, transform 0.2s ease;
 }
 
-/* 목록 줄 마우스 오버 시 배경 강조 */
+/* 리스트 항목 호버 시 연파랑 배경색 */
 .todo-item:hover {
-  background-color: #f8fff8;
+  background-color: #eff4fa;
 }
 
-/* 제목, 내용, 날짜 등 텍스트 정보가 담긴 중앙 영역 */
+/* 완료된 상태(completed) 스타일: 연초록 배경 및 투명도 조절 */
+.todo-item.completed {
+  background-color: #e8f5e9; 
+  opacity: 0.8;
+}
+
+.todo-item.completed:hover {
+  background-color: #d4e9d4; /* 완료 항목 호버 시 좀 더 진한 초록 */
+}
+
+/* 체크박스 디자인 (초록색 포인트) */
+.todo-checkbox-wrapper input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #4caf50; 
+}
+
+/* 할 일 번호 스타일 */
+.todo-tno {
+  min-width: 45px;
+  font-size: 0.9rem;
+  color: #4A90E2;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* 할 일 텍스트 내용 영역 */
 .todo-content {
-  flex: 1;
-  margin: 0 15px;
+  flex: 1; 
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
+  cursor: pointer;
+  overflow: hidden;
 }
 
-/* 목록 내의 카테고리(업무, 운동 등) 배지 디자인 */
-.category-badge {
-  display: inline-block;
-  font-size: 0.75em;
-  background-color: #e2e8f0;
-  color: #4a5568;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-weight: bold;
-  width: fit-content;
-}
-
-/* 할 일 고유 번호(TNO) 표시 스타일 */
-.todo-tno {
-  font-size: 0.85em;
-  color: #4A90E2;
-  font-weight: bold;
-  margin-right: 8px;
-}
-
-/* 할 일의 핵심 제목 텍스트 */
-.todo-title {
-  font-size: 1.1em;
-  font-weight: 600;
-  color: #333;
-}
-
-/* 추가된 상세 내용(Content) 텍스트 스타일 */
-.todo-desc {
-  font-size: 0.9em;
-  color: #777;
-  margin: 2px 0;
-}
-
-/* 우선순위 배지 (p1, p2, p3 클래스에 따라 색상 변경 가능) */
-.priority-badge {
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-/* 우선순위 3 (높음) - 빨간색 계열 */
-.priority-badge.p3 {
-  background-color: #ffebee;
-  color: #d32f2f;
-}
-
-/* 우선순위 2 (보통) - 파란색 계열 */
-.priority-badge.p2 {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-/* 우선순위 1 (낮음) - 회색 계열 */
-.priority-badge.p1 {
-  background-color: #f5f5f5;
-  color: #757575;
-}
-
-/* 마감 기한 날짜 표시 영역 */
-.due-date {
-  font-size: 0.85em;
-  color: #888;
-}
-
-/* 완료된 할 일 아이템의 전체 배경 및 테두리 효과 */
-.todo-item.completed {
-  background-color: #fcfcfc;
-  border-left: 5px solid #4caf50;
-  opacity: 0.7;
-}
-
-/* 완료된 할 일 제목에 취소선 적용 */
+/* 완료 시 제목 및 설명에 취소선 적용 */
 .completed .todo-title {
   text-decoration: line-through;
-  color: #aaa;
+  color: #777;
+}
+.completed .todo-desc {
+  color: #999;
 }
 
-/* 개별 할 일을 삭제하는 버튼 */
+/* 정보 배지 그룹 (카테고리, 우선순위, 날짜) */
+.todo-info-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* 카테고리 배지 (회색 박스) */
+.category-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background-color: #f1f3f5;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+/* 우선순위 배지 (둥근 캡슐 형태) */
+.priority-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 12px;
+  display: inline-flex;
+}
+
+/* 우선순위별 박스 색상 (P3:빨강, P2:파랑, P1:회색) */
+.priority-badge.p3 { background-color: #ffebee; color: #d32f2f; border: 1px solid #ffcdd2; }
+.priority-badge.p2 { background-color: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
+.priority-badge.p1 { background-color: #f8f9fa; color: #6c757d; border: 1px solid #e9ecef; }
+
+/* 완료 상태가 되면 모든 배지의 색상을 무채색으로 통일 */
+.completed .category-badge,
+.completed .priority-badge {
+  background-color: #f1f3f5 !important;
+  color: #adb5bd !important;
+  border-color: #e9ecef !important;
+}
+
+/* 개별 삭제 버튼 스타일 */
 .delete-btn {
   background-color: #fff;
   color: #ff5252;
   border: 1px solid #ff5252;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 8px 15px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9em;
+  font-weight: 700;
   transition: all 0.2s;
+  flex-shrink: 0; 
 }
 
-/* 삭제 버튼 마우스 오버 시 반전 효과 */
 .delete-btn:hover {
   background-color: #ff5252;
   color: #fff;
 }
 
-/* 모달 배경 (어둡게 처리) */
+
+/* ==========================================================================
+   6. 수정 모달창 (Modal Popup)
+   - backdrop-filter를 활용해 배경을 흐리게 처리했습니다.
+   ========================================================================== */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  backdrop-filter: blur(2px); /* 배경 블러 효과 */
 }
 
-/* 모달 하얀색 박스 */
 .modal-content {
   background: white;
-  padding: 30px;
-  border-radius: 15px;
-  width: 500px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  padding: 35px;
+  border-radius: 20px;
+  width: 550px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
 
-.modal-body {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin: 20px 0;
-}
-
-.modal-body label {
-  font-weight: bold;
-  font-size: 0.9em;
-  color: #555;
-}
-
-.modal-body input, .modal-body textarea, .modal-body select {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-.modal-row {
-  display: flex;
-  gap: 20px;
-}
-
-.modal-row > div {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+/* 모달 내부 입력창 포커스 스타일 (메인 입력창과 동일하게 유지) */
+.modal-body input:focus, 
+.modal-body textarea:focus, 
+.modal-body select:focus {
+  border-color: #4A90E2;
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.15);
 }
 
 .save-btn {
   background-color: #4A90E2;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: bold;
   cursor: pointer;
 }
 
 .cancel-btn {
-  background-color: #eee;
+  background-color: #f1f3f5;
+  color: #495057;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: bold;
   cursor: pointer;
 }

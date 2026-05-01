@@ -1,15 +1,19 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import { useEffect, useState } from 'react';
+import './App.css';
 
 function App() {
   // --- [1. 상태 관리 (State)] ---
+
+  // 전체 할 일 목록 데이터를 저장하는 배열.
   const [todos, setTodos] = useState([]);
-  // 검색
+  
+  // 사용자가 입력한 검색어를 저장하는 문자열.
   const [searchTerm, setSearchTerm] = useState("");
-  // 정렬
+  
+  // 정렬 기준을 저장(tno: 최신순, dueDate: 마감순, priority: 우선순위순).
   const [sortType, setSortType] = useState("tno");
   
-  // 입력 양식 상태
+  // 신규 할 일 입력을 위한 객체 형태의 상태. 제목, 내용, 기한, 우선순위, 카테고리 포함.
   const [todoInput, setTodoInput] = useState({
     title: '', 
     content: '', 
@@ -18,17 +22,21 @@ function App() {
     category: '일반'
   });
 
-  // 수정 모달 상태
+  // 수정 모달창의 표시 여부를 결정하는 불리언 값.
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // 현재 수정 중인 특정 할 일 데이터를 임시 저장하는 객체.
   const [editingTodo, setEditingTodo] = useState(null);
+
 
   // --- [2. API 통신 및 데이터 처리] ---
   
-  // 데이터 불러오기 (정렬/검색어 변경 시 자동 실행)
+  // 정렬 기준이나 검색어가 변경될 때마다 서버에서 데이터를 다시 가져옴.
   useEffect(() => {
     fetchTodos();
   }, [sortType, searchTerm]);
 
+  // 백엔드 API로부터 조건에 맞는 할 일 목록을 요청.
   const fetchTodos = async () => {
     try {
       const response = await fetch(`http://localhost:8081/api/todos?sort=${sortType}&keyword=${searchTerm}`);
@@ -39,7 +47,7 @@ function App() {
     }
   };
 
-  // 신규 등록
+  // 신규 할 일을 서버에 POST 방식으로 등록 요청.
   const handleAddTodo = () => {
     if (!todoInput.title.trim()) {
       alert("제목을 입력해주세요!");
@@ -54,17 +62,18 @@ function App() {
     .then(response => {
       if (response.ok) {
         alert("등록 성공!");
+        // 등록 성공 후 입력 필드 초기화.
         setTodoInput({
           title: '', content: '', 
           dueDate: new Date().toISOString().split('T')[0], 
           priority: 2, category: '일반'
         });
-        fetchTodos(); // 새로고침 대신 목록 재요청
+        fetchTodos();
       }
     });
   };
 
-  // 삭제 처리
+  // 특정 할 일을 번호(tno) 기준으로 삭제 요청.
   const handleDelete = (tno) => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
 
@@ -74,7 +83,7 @@ function App() {
       });
   };
 
-  // 통합 삭제 함수: 완료된 항목만 필터링해서 삭제
+  // 완료(checked) 상태인 항목들만 필터링하여 일괄 삭제 요청.
   const handleDeleteFinished = () => {
     const finishedIds = todos
       .filter(todo => todo.finished)
@@ -85,34 +94,33 @@ function App() {
       return;
     }
 
-    if (!confirm(`완료된 ${finishedIds.length}개의 항목을 삭제하시겠습니까?`)) {return;}
+    if (!confirm(`완료된 ${finishedIds.length}개의 항목을 삭제하시겠습니까?`)) return;
   
     fetch(`http://localhost:8081/api/todos?mode=deleteSelected&nos=${finishedIds.join(',')}`, {
       method: 'POST'
     }).then(response => {
       if (response.ok) {
-        alert("완료된 항목들이 삭제되었습니다.")
+        alert("완료된 항목들이 삭제되었습니다.");
         fetchTodos();
       }
     });
-  
   };
 
+  // 데이터베이스의 모든 할 일 데이터를 삭제하는 초기화 기능.
   const handleDeleteAll = () => {
-  if (!confirm("정말 모든 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) return;
+    if (!confirm("정말 모든 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) return;
 
-  // mode=deleteAll로 요청을 보냅니다.
-  fetch(`http://localhost:8081/api/todos?mode=deleteAll`, {
-    method: 'POST'
-  }).then(response => {
-    if (response.ok) {
-      alert("모든 데이터가 삭제되었습니다.");
-      fetchTodos(); // 목록 새로고침
-    }
-  });
-};
+    fetch(`http://localhost:8081/api/todos?mode=deleteAll`, {
+      method: 'POST'
+    }).then(response => {
+      if (response.ok) {
+        alert("모든 데이터가 삭제되었습니다.");
+        fetchTodos();
+      }
+    });
+  };
 
-  // 완료 상태 토글
+  // 할 일의 완료 여부(finished)를 반전시켜 업데이트 요청.
   const handleToggleTodo = (todo) => {
     fetch(`http://localhost:8081/api/todos?mode=updateFinished&tno=${todo.tno}&finished=${!todo.finished}`, {
       method: 'POST'
@@ -121,10 +129,11 @@ function App() {
     });
   };
 
+
   // --- [3. 모달 및 수정 핸들러] ---
   
+  // 수정 버튼 클릭 시 모달을 열고 해당 항목의 데이터를 셋팅. 날짜 형식 변환 포함.
   const openModal = (todo) => {
-    // 날짜 배열 형식을 문자열(YYYY-MM-DD)로 변환
     let formattedDate = todo.dueDate;
     if (Array.isArray(todo.dueDate)) {
       const [year, month, day] = todo.dueDate;
@@ -134,6 +143,7 @@ function App() {
     setIsModalOpen(true);
   };
 
+  // 모달에서 수정한 내용을 서버에 최종 반영 요청.
   const handleUpdate = () => {
     fetch(`http://localhost:8081/api/todos?mode=modify`, {
       method: 'POST',
@@ -147,23 +157,28 @@ function App() {
     });
   };
 
+
   // --- [4. 이벤트 리스너] ---
+
+  // 등록 폼의 input 값이 변할 때마다 todoInput 상태를 실시간 업데이트.
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setTodoInput({ ...todoInput, [name]: value });
   };
 
+  // 모달 폼의 input 값이 변할 때마다 editingTodo 상태를 실시간 업데이트.
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditingTodo({ ...editingTodo, [name]: value });
   };
+
 
   // --- [5. 화면 렌더링] ---
   return (
     <div className="app-container">
       <h1>실시간 할 일 관리</h1>
 
-      {/* 등록 섹션 */}
+      {/* 할 일 등록 섹션: 제목, 기한, 카테고리, 상세내용 입력 가능. */}
       <div className="input-group-container">
         <div className='input-row'>
           <input name='title' type="text" placeholder="할 일 제목" value={todoInput.title} onChange={handleInputChange} />
@@ -176,50 +191,64 @@ function App() {
           </select>
         </div>
         <div className="input-row">
-          <textarea name='content' placeholder='상세 내용' value={todoInput.content} onChange={handleInputChange} />
+          <textarea name='content' placeholder='상세 내용을 입력하세요...' value={todoInput.content} onChange={handleInputChange} />
           <div className="priority-group">
-            <label>우선순위: </label>
+            <label>우선순위 </label>
             <select name='priority' value={todoInput.priority} onChange={handleInputChange}>
               <option value='1'>낮음</option>
               <option value='2'>보통</option>
               <option value='3'>높음</option>
             </select>
           </div>
-          <button onClick={handleAddTodo} className="add-btn">등록</button>
+          <button onClick={handleAddTodo} className="add-btn">등록하기</button>
         </div>
-        
-        {/* 검색 및 정렬 제어 */}
-        <div className="todo-list-controls">
-          <input type="text" placeholder="검색어 입력..." value={searchTerm} 
+      </div>
+
+      <hr className="section-divider" />
+
+      {/* 검색 및 정렬 섹션: 실시간 검색어 입력 및 정렬 옵션 선택. */}
+      <div className="search-sort-container">
+        <div className="search-box">
+          <span className="icon">🔍</span>
+          <input type="text" placeholder="어떤 할 일을 찾으시나요?" value={searchTerm} 
                  onChange={(e) => setSearchTerm(e.target.value)} className="search-input" />
+        </div>
+        <div className="sort-box">
+          <label>정렬 기준: </label>
           <select value={sortType} onChange={(e) => setSortType(e.target.value)} className="sort-select">
             <option value="tno">최신등록순</option>
             <option value="dueDate">마감임박순</option>
             <option value="priority">우선순위순</option>
           </select>
         </div>
-        
-        <div className="batch-actions">
-          {/* 이제 '전체 선택' 대신 '완료 항목 삭제' 버튼 하나로 충분합니다 */}
-          <button onClick={handleDeleteFinished} className="delete-finished-btn">
-            완료 항목 일괄 삭제
-          </button>
-          <button onClick={handleDeleteAll} className="delete-all-btn">전체 삭제</button>
+      </div>
+
+      <hr className="section-divider" />
+
+      {/* 일괄 작업 섹션: 완료 항목 삭제 및 전체 초기화 버튼. */}
+      <div className="batch-actions-container">
+        <div className="action-buttons">
+          <button onClick={handleDeleteFinished} className="delete-finished-btn">선택 완료 항목 삭제</button>
+          <button onClick={handleDeleteAll} className="delete-all-btn">전체 데이터 초기화</button>
         </div>
       </div>
 
-      <hr />
+      <hr className="list-top-divider" />
 
-      {/* 목록 섹션 */}
+      {/* 목록 섹션: 데이터 유무에 따라 비어있는 상태 또는 할 일 리스트 출력. */}
       {todos.length === 0 ? (
-        <p>데이터가 없습니다.</p>
+        <div className="empty-state">
+          <p>등록된 할 일이 없습니다. 새로운 계획을 추가해보세요!</p>
+        </div>
       ) : (
         <ul className="todo-list">
           {todos.map(todo => (
             <li key={todo.tno} className={`todo-item ${todo.finished ? 'completed' : ''}`}>
-              <div className="todo-checkbox"> 
+              {/* 완료 체크박스: 클릭 시 즉시 서버 상태와 동기화. */}
+              <div className="todo-checkbox-wrapper"> 
                 <input type="checkbox" checked={todo.finished} onChange={() => handleToggleTodo(todo)} />
               </div>             
+              {/* 할 일 상세 내용: 클릭 시 수정 모달 오픈. */}
               <div className="todo-content" onClick={() => openModal(todo)}>
                 <div className="todo-header">
                   <span className="todo-tno">#{todo.tno}</span>
@@ -238,7 +267,7 @@ function App() {
         </ul>
       )}
 
-      {/* 수정 모달 */}
+      {/* 수정 모달창: 수정 중인 상태(editingTodo)가 존재할 때만 렌더링. */}
       {isModalOpen && editingTodo && (
         <div className="modal-overlay">
           <div className="modal-content">
