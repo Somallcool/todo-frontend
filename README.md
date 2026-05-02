@@ -90,10 +90,3 @@
 ### 3. 사용자 경험(UX) 확장
 - **반복 일정 설정**: 매일 혹은 매주 반복되는 루틴 업무를 한 번의 등록으로 자동 생성하는 기능을 추가할 예정입니다.
 
----
-
-## 🚀 실행 방법
-1. 프로젝트 클론 및 이동:
-   ```bash
-   git clone [https://github.com/Somallcool/todo-frontend.git](https://github.com/Somallcool/todo-frontend.git)
-   cd todo-frontend
