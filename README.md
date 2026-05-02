@@ -11,6 +11,11 @@
 ## 🔗 관련 링크
 - **Back-end Repository (API Server)**: [github.com/Somallcool/todo-backend](https://github.com/Somallcool/todo-backend.git)
 
+## 📅 작업 기간 (약 10일)
+- **백엔드 작업기간:** 4/24 ~ 4/30
+- **프론트 작업가간:** 4/30 ~ 5/1
+- **마무리 정리:** 1.5일
+
 ## 🛠 핵심 기술 스택
 - **Library**: `React.js`, `Vite`
 - **State Management**: React Hooks (`useState`, `useEffect`)
