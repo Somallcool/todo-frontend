@@ -1,4 +1,4 @@
-# 🎨 Today Todo Management System (TTMS/Front-end)
+# 🎨 Today's Work (Front-end)
 
 사용자 친화적인 인터페이스와 실시간 데이터 연동에 집중한 할 일 관리 애플리케이션의 프론트엔드 구현체입니다. **React**와 **Vite**를 사용하여 개발되었으며, **Java Servlet** API 서버와 통신합니다.
 
