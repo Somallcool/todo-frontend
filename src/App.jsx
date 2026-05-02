@@ -90,17 +90,17 @@ function App() {
       .map(todo => todo.tno);
 
     if (finishedIds.length === 0) {
-      alert("완료된 항목이 없습니다.");
+      alert("아직 마무리하신 오늘 할 일을 선택하시지 않으셨어요! 꼼꼼히 확인해보도록 하죠!");
       return;
     }
 
-    if (!confirm(`완료된 ${finishedIds.length}개의 항목을 삭제하시겠습니까?`)) return;
+    if (!confirm(`벌써 ${finishedIds.length}개의 오늘 할 일을 마무리하셨네요! 그래도 다시 한 번 확인해 보세요!`)) return;
   
     fetch(`http://localhost:8081/api/todos?mode=deleteSelected&nos=${finishedIds.join(',')}`, {
       method: 'POST'
     }).then(response => {
       if (response.ok) {
-        alert("완료된 항목들이 삭제되었습니다.");
+        alert("오늘 한 일들을 지웠어요! ");
         fetchTodos();
       }
     });
@@ -108,13 +108,13 @@ function App() {
 
   // 데이터베이스의 모든 할 일 데이터를 삭제하는 초기화 기능.
   const handleDeleteAll = () => {
-    if (!confirm("정말 모든 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) return;
+    if (!confirm("오늘의 할 일을 마무리하셨나요? 깔끔하게 지워드릴게요!")) return;
 
     fetch(`http://localhost:8081/api/todos?mode=deleteAll`, {
       method: 'POST'
     }).then(response => {
       if (response.ok) {
-        alert("모든 데이터가 삭제되었습니다.");
+        alert("축하드립니다! 오늘의 할 일을 마무리하셨어요! 내일도 응원하겠습니다!");
         fetchTodos();
       }
     });
@@ -176,7 +176,7 @@ function App() {
   // --- [5. 화면 렌더링] ---
   return (
     <div className="app-container">
-      <h1>실시간 할 일 관리</h1>
+      <h1>TODAY'S WORK </h1>
 
       {/* 할 일 등록 섹션: 제목, 기한, 카테고리, 상세내용 입력 가능. */}
       <div className="input-group-container">
@@ -244,24 +244,35 @@ function App() {
         <ul className="todo-list">
           {todos.map(todo => (
             <li key={todo.tno} className={`todo-item ${todo.finished ? 'completed' : ''}`}>
-              {/* 완료 체크박스: 클릭 시 즉시 서버 상태와 동기화. */}
+              
+              {/* [구간 1] 완료 체크박스 */}
               <div className="todo-checkbox-wrapper"> 
                 <input type="checkbox" checked={todo.finished} onChange={() => handleToggleTodo(todo)} />
               </div>             
-              {/* 할 일 상세 내용: 클릭 시 수정 모달 오픈. */}
-              <div className="todo-content" onClick={() => openModal(todo)}>
-                <div className="todo-header">
-                  <span className="todo-tno">#{todo.tno}</span>
+
+              {/* [구간 2] 정보 헤더 (번호, 우선순위, 카테고리) - 왼쪽 정렬 영역 */}
+              <div className="todo-header-section" onClick={() => openModal(todo)}>
+                <span className="todo-tno">#{todo.tno}</span>
+                <div className="badge-group">
                   <span className={`priority-badge p${todo.priority}`}>
                     {todo.priority === 3 ? "🔥 높음" : todo.priority === 2 ? "✅ 보통" : "💤 낮음"}
                   </span>
                   <span className="category-badge">{todo.category}</span>
                 </div>
+              </div>
+
+              {/* [구간 3] 본문 내용 (제목, 상세내용, 날짜) - 중앙 확장 영역 */}
+              <div className="todo-body-section" onClick={() => openModal(todo)}>
                 <strong className="todo-title">{todo.title}</strong>
                 {todo.content && <p className="todo-desc">{todo.content}</p>}
                 <span className="due-date">📅 기한: {Array.isArray(todo.dueDate) ? todo.dueDate.join('-') : todo.dueDate}</span>
               </div>
-              <button onClick={() => handleDelete(todo.tno)} className="delete-btn">삭제</button>
+
+              {/* [구간 4] 삭제 버튼 */}
+              <div className="todo-action-section">
+                <button onClick={() => handleDelete(todo.tno)} className="delete-btn">삭제</button>
+              </div>
+
             </li>
           ))}
         </ul>
