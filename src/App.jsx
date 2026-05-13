@@ -39,7 +39,7 @@ function App() {
   // 백엔드 API로부터 조건에 맞는 할 일 목록을 요청.
   const fetchTodos = async () => {
     try {
-      const response = await fetch(`http://localhost:8081/api/todos?sort=${sortType}&keyword=${searchTerm}`);
+      const response = await fetch(`/api/todos?sort=${sortType}&keyword=${searchTerm}`);
       const data = await response.json();
       setTodos(data);
     } catch (err) {
@@ -54,7 +54,7 @@ function App() {
       return;
     }
 
-    fetch('http://localhost:8081/api/todos', {
+    fetch('/api/todos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...todoInput, finished: false })
@@ -77,7 +77,7 @@ function App() {
   const handleDelete = (tno) => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
 
-    fetch(`http://localhost:8081/api/todos?mode=delete&tno=${tno}`, { method: 'POST' })
+    fetch(`/api/todos?mode=delete&tno=${tno}`, { method: 'POST' })
       .then(response => {
         if (response.ok) fetchTodos();
       });
@@ -96,7 +96,7 @@ function App() {
 
     if (!confirm(`벌써 ${finishedIds.length}개의 오늘 할 일을 마무리하셨네요! 그래도 다시 한 번 확인해 보세요!`)) return;
   
-    fetch(`http://localhost:8081/api/todos?mode=deleteSelected&nos=${finishedIds.join(',')}`, {
+    fetch(`/api/todos?mode=deleteSelected&nos=${finishedIds.join(',')}`, {
       method: 'POST'
     }).then(response => {
       if (response.ok) {
@@ -110,7 +110,7 @@ function App() {
   const handleDeleteAll = () => {
     if (!confirm("오늘의 할 일을 마무리하셨나요? 깔끔하게 지워드릴게요!")) return;
 
-    fetch(`http://localhost:8081/api/todos?mode=deleteAll`, {
+    fetch(`/api/todos?mode=deleteAll`, {
       method: 'POST'
     }).then(response => {
       if (response.ok) {
@@ -122,7 +122,7 @@ function App() {
 
   // 할 일의 완료 여부(finished)를 반전시켜 업데이트 요청.
   const handleToggleTodo = (todo) => {
-    fetch(`http://localhost:8081/api/todos?mode=updateFinished&tno=${todo.tno}&finished=${!todo.finished}`, {
+    fetch(`/api/todos?mode=updateFinished&tno=${todo.tno}&finished=${!todo.finished}`, {
       method: 'POST'
     }).then(response => {
       if (response.ok) fetchTodos();
@@ -145,7 +145,7 @@ function App() {
 
   // 모달에서 수정한 내용을 서버에 최종 반영 요청.
   const handleUpdate = () => {
-    fetch(`http://localhost:8081/api/todos?mode=modify`, {
+    fetch(`/api/todos?mode=modify`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(editingTodo)
